@@ -1,0 +1,12 @@
+
+version: '3.20'
+
+services:
+  python:
+    build:
+      context: .
+      dockerfile: ./compose/python/Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
