@@ -1,47 +1,43 @@
 
 import base64
 from threading import Thread
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from flask import Flask, render_template, request
 import numpy as np
-import uvicorn
-import socketio
-from fastapi.templating import Jinja2Templates
+import gunicorn
+from flask_socketio import SocketIO
 import cv2
 
-app = FastAPI();
-
-sio = socketio.AsyncServer(cors_allowed_origins='*', async_mode='asgi')
-socket_app = socketio.ASGIApp(sio)
-
-app.mount('/socket.io', socket_app)
-
-templates = Jinja2Templates(directory='app/templates')
+app = Flask(__name__);
+socketio = SocketIO(app)
 
 current_frame = None
+sid = None
 
-@app.get('/', response_class=HTMLResponse)
-async def root(req:Request):
+@app.get('/')
+def index():
     # return { 'message': 'Hello strange!!' }
-    return templates.TemplateResponse('index.html', context={ 'request': req })
+    return render_template('index.html')
 
-@sio.on('connect')
-async def connect(sid, env):
+@socketio.on('connect')
+def connect():
+    global sid
+    sid = request.sid
     print(f'New client connected, id: {str(sid)}') 
 
-@sio.on('disconnect')
-async def disconnect(sid):
+@socketio.on('disconnect')
+def disconnect():
+    global sid
     print(f'Client disconnected, id: {str(sid)}') 
 
-@sio.on('frame')
-async def handle_frame(sid, data):
+@socketio.on('frame')
+def handle_frame(data):
     global current_frame
     img_data = base64.b64decode(data.split(',')[1])
     array = np.frombuffer(img_data, np.uint8) # Convert the image data to a NumPy array
     frame = cv2.imdecode(array, cv2.IMREAD_COLOR) # Decode the image
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     current_frame = gray
-    print(f"Received data: {data[:100]}...") 
+    # print(f"Received data: {data[:100]}...") 
 
 def display_frames():
     global current_frame
@@ -56,4 +52,5 @@ def display_frames():
 if __name__ == '__main__':
     display_thread = Thread(target=display_frames, daemon=True) # Create a thread for displaying frames
     display_thread.start() # Start the thread
-    uvicorn.run('main:app', host='0.0.0.0', port=8080, reload=True, workers=2)
+    gunicorn.SERVER_NAME = 'gunicorn'
+    socketio.run(app, host='0.0.0.0', port=8080, debug=True)
