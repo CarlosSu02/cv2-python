@@ -19,7 +19,7 @@ def index():
 def handle_frame(data):
     global current_frame
     img_data = base64.b64decode(data.split(',')[1])
-    Array = np.frombuffer(img_data, np.uint8) # Convert the image data to a NumPy array
+    array = np.frombuffer(img_data, np.uint8) # Convert the image data to a NumPy array
     frame = cv2.imdecode(array, cv2.IMREAD_COLOR) # Decode the image
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     current_frame = gray
