@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Stream</title>
+    <script src="https://cdn.socket.io/4.1.3/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Live Camera Stream</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+
+    <script>
+        const video = document.getElementById('video');
+        const socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                video.play();
+
+                const canvas = document.createElement('canvas');
+                canvas.width = 640;
+                canvas.height = 480;
+                const context = canvas.getContext('2d');
+
+                setInterval(() => {
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const dataURL = canvas.toDataURL('image/jpeg');
+                    socket.emit('frame', dataURL);
+                }, 100); // Send frames every 100ms
+            })
+            .catch(err => {
+                console.error("Error accessing the camera: ", err);
+            });
+    </script>
+</body>
+</html>

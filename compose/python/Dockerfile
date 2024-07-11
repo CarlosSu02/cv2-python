@@ -1,11 +1,11 @@
 
 FROM python:3.12-alpine
 
-ARG OPENCV_VERSION="4.8.0"
+ARG OPENCV_VERSION="4.10.0"
 
 WORKDIR /opt/build
 
-RUN set -eux \
+RUN set -ex \
     && echo "@edge http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "@community http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
     && echo "@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
