@@ -16,6 +16,16 @@
         const video = document.getElementById('video');
         const socket = io.connect('http://' + document.domain + ':' + location.port);
 
+        // const { id } = socket;
+
+        // console.log(socket);
+        // console.log(socket.id);
+
+        // receive messages from the server
+        // socket.on('messages', data => { 
+        //     console.log(data);
+        //     return data; });
+
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(stream => {
                 video.srcObject = stream;
