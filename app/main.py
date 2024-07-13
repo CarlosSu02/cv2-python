@@ -1,15 +1,15 @@
 
-from ast import Dict
 import base64
 from datetime import datetime
-import re
 from threading import Thread, Lock
+import time
 from flask import Flask, Response, redirect, render_template, request
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import numpy as np
 import gunicorn
 import cv2
+import mediapipe as mp
 
 app = Flask(__name__)
 # app.config['SOCKET'] = ''
@@ -22,7 +22,17 @@ current_frame = None
 sid = None
 # frame_clock = Lock()
 
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+# Load the cascade for face detection
+# face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
+# Load the mediapipe hands model
+mp_drawing = mp.solutions.drawing_utils
+mp_hands = mp.solutions.hands
+hand = mp_hands.Hands()
+
+# Time and FPS Calculation
+c_time = 0
+p_time = 0
 
 class User:
     def __init__(self, sid = None, date = ''):
@@ -89,6 +99,24 @@ def disconnect():
     sid = None
     current_user = User()
 
+def count_fingers(hand_landmarks):
+    fingers = []
+
+    # Thumb
+    if hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].x > hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_IP].x:
+        fingers.append(1)
+    else:
+        fingers.append(0)
+
+    # 4 Fingers
+    for id in range(1, 5):
+        if hand_landmarks.landmark[mp_hands.HandLandmark(id * 4)].y < hand_landmarks.landmark[mp_hands.HandLandmark(id * 4 - 2)].y:
+            fingers.append(1)
+        else:
+            fingers.append(0)
+    
+    return fingers
+
 @socketio.on('frame')
 def handle_frame(data):
     global current_frame
@@ -99,11 +127,11 @@ def handle_frame(data):
     # emit('messages', { 'data': 'hello!' })
 
     # Detect faces
-    faces = face_cascade.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30), flags=cv2.CASCADE_SCALE_IMAGE)
+    # faces = face_cascade.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30), flags=cv2.CASCADE_SCALE_IMAGE)
 
     # Draw rectangle around the faces
-    for (x, y, w, h) in faces:
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 4)
+    # for (x, y, w, h) in faces:
+    #     cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 4)
 
     current_frame = frame
     # print(f"Received data: {data[:100]}...") 
@@ -111,14 +139,49 @@ def handle_frame(data):
     # with frame_clock:
     #     current_frame = gray
 
-
 def display_frames():
     global current_frame
+    global c_time
+    global p_time
+
     # print type current_frame
     while True:
         # with frame_clock:
         if current_frame is not None:
-                cv2.imshow('Frame', current_frame)
+            RGB_frame = cv2.cvtColor(current_frame, cv2.COLOR_BGR2RGB)
+            result = hand.process(RGB_frame)
+            if result.multi_hand_landmarks:
+                for hand_landmarks in result.multi_hand_landmarks:
+                    # for point in hand_landmarks.landmark:
+                        # mp_drawing.draw_landmarks(current_frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+
+                    # for id, lm in enumerate(hand_landmarks.landmark):
+                    #     #print(id, lm)
+                    #     h, w, c = current_frame.shape
+                    #     cx, cy = int(lm.x*w), int(lm.y*h)
+                    #     # print(id, cx, cy)
+
+                    #     cv2.circle(current_frame, (cx, cy), 15, (139, 0, 0), cv2.FILLED)
+
+                    mp_drawing.draw_landmarks(current_frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+
+                    fingers = count_fingers(hand_landmarks)
+                    finger_count = fingers.count(1)
+
+                    print(fingers)
+
+                    cv2.putText(current_frame, str(finger_count), (10,70), cv2.FONT_HERSHEY_SIMPLEX, 3, (139,0,0), 3)
+
+
+
+            # Time and FPS Calculation
+            c_time = time.time()
+            fps = 1/(c_time-p_time)
+            p_time = c_time
+             
+            # cv2.putText(current_frame, str(int(fps)), (10,70), cv2.FONT_HERSHEY_SIMPLEX, 3, (139,0,0), 3)
+
+            cv2.imshow('Frame', current_frame)
     
         if cv2.waitKey(30) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
