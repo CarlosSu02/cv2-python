@@ -22,9 +22,9 @@
         // console.log(socket.id);
 
         // receive messages from the server
-        // socket.on('messages', data => { 
-        //     console.log(data);
-        //     return data; });
+        socket.on('messages', data => { 
+            console.log(data);
+            return data; });
 
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(stream => {

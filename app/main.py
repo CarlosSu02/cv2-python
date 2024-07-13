@@ -1,37 +1,91 @@
 
+from ast import Dict
 import base64
+from datetime import datetime
+import re
 from threading import Thread, Lock
-from flask import Flask, render_template, request
+from flask import Flask, Response, redirect, render_template, request
+from flask_socketio import SocketIO, emit
+from flask_cors import CORS
 import numpy as np
 import gunicorn
-from flask_socketio import SocketIO, emit
 import cv2
 
-app = Flask(__name__);
-socketio = SocketIO(app)
+app = Flask(__name__)
+# app.config['SOCKET'] = ''
+CORS(app, resources={ r'/*': { 'origins': '*' } })
+
+socketio = SocketIO(app, cors_allowed_origins='*')
+# socketio = SocketIO(app)
 
 current_frame = None
 sid = None
 # frame_clock = Lock()
 
+class User:
+    def __init__(self, sid = None, date = ''):
+        self.sid = sid
+        self.date = date
+
+    def data(self):
+        return f'sid: { self.sid }, date: { self.date }'
+    
+    def res(self):
+        return {
+            'sid': self.sid,
+            'date': self.date
+        }
+        
+# current_user = None
+current_user = User() # Not show error on init app
+
 @app.get('/')
 def index():
+    return {
+        'message': 'May the force be with you!',
+    }, 200
+
+'''
+'''
+@app.get('/video')
+def video():
     # return { 'message': 'Hello strange!!' }
-    return render_template('index.html')
+    return render_template('index2.html'), 200
+    # return redirect('https://google.com', code=302)
+
+@app.get('/status')
+def status():
+    # print(current_user.data())
+    # return {
+    #     'sid': sid
+    # }, 200;
+    return current_user.res(), 200
 
 @socketio.on('connect')
 def connect():
     global sid
+    global current_user
+
+    # print(request.sid, current_user.sid)
+
     sid = request.sid
 
+    # current_user.sid = request.sid, 
+    # current_user.date = datetime.now()
+    
+    current_user = User(sid, datetime.now())
+
     # emit('messages', { 'data': False })
-    print(f'New client connected, id: {str(sid)}') 
+    print(f'New client connected, id: { str(sid) }') 
 
 @socketio.on('disconnect')
 def disconnect():
     global sid
-    print(f'Client disconnected, id: {str(sid)}')
-    # sid = None
+    global current_user
+    
+    print(f'Client disconnected, id: { str(sid) }')
+    sid = None
+    current_user = User()
 
 @socketio.on('frame')
 def handle_frame(data):
