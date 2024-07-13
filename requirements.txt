@@ -12,3 +12,4 @@ flask_socketio == 5.3.6
 gunicorn == 22.0.0
 Flask-Cors == 4.0.1
 mediapipe == 0.10.14
+cvzone == 1.6.1
