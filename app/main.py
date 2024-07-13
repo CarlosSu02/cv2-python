@@ -22,6 +22,8 @@ current_frame = None
 sid = None
 # frame_clock = Lock()
 
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
 class User:
     def __init__(self, sid = None, date = ''):
         self.sid = sid
@@ -93,9 +95,17 @@ def handle_frame(data):
     img_data = base64.b64decode(data.split(',')[1])
     array = np.frombuffer(img_data, np.uint8) # Convert the image data to a NumPy array
     frame = cv2.imdecode(array, cv2.IMREAD_COLOR) # Decode the image
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # emit('messages', { 'data': 'hello!' })
-    current_frame = gray
+
+    # Detect faces
+    faces = face_cascade.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30), flags=cv2.CASCADE_SCALE_IMAGE)
+
+    # Draw rectangle around the faces
+    for (x, y, w, h) in faces:
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 4)
+
+    current_frame = frame
     # print(f"Received data: {data[:100]}...") 
 
     # with frame_clock:
