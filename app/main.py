@@ -3,11 +3,9 @@ import base64
 from datetime import datetime
 from threading import Thread, Lock
 import time
-from chardet import detect
 from flask import Flask, Response, redirect, render_template, request
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
-from matplotlib.pylab import det
 import numpy as np
 import gunicorn
 import cv2
@@ -19,7 +17,6 @@ app = Flask(__name__)
 CORS(app, resources={ r'/*': { 'origins': '*' } })
 
 socketio = SocketIO(app, cors_allowed_origins='*')
-# socketio = SocketIO(app)
 
 current_frame = None
 sid = None
@@ -35,7 +32,6 @@ hand = mp_hands.Hands()
 
 # Initialising detector from HandTrackingModule
 detector = htm.HandDetector(detectionCon=0.6, maxHands=1)
-# fingers_count = 0
 fingers = {
     0: 'thumb',
     1: 'index',
@@ -81,10 +77,6 @@ def video():
 
 @app.get('/status')
 def status():
-    # print(current_user.data())
-    # return {
-    #     'sid': sid
-    # }, 200;
     return current_user.res(), 200
 
 @socketio.on('connect')
@@ -119,7 +111,7 @@ def handle_frame(data):
     img_data = base64.b64decode(data.split(',')[1])
     array = np.frombuffer(img_data, np.uint8) # Convert the image data to a NumPy array
     frame = cv2.imdecode(array, cv2.IMREAD_COLOR) # Decode the image
-    # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # emit('messages', { 'data': 'hello!' })
 
     # Detect faces
@@ -131,21 +123,48 @@ def handle_frame(data):
 
     current_frame = frame
 
-    # print(f"Received data: {data[:100]}...") 
+    # Encode the frame in JPEG format
+    hand_tracking(frame)
+    _, buffer = cv2.imencode('.jpg', frame)
+
+    # Emit the frame to the client
+    emit('new-frame', { 'data': base64.b64encode(buffer).decode('utf-8') })
 
     # with frame_clock:
     #     current_frame = gray
 
+# This function is used to track the hand
+def hand_tracking(frame):
+    # Encode the frame in JPEG format
+    hands, _ = detector.findHands(frame)
+
+    if not hands:
+        return
+
+    # if hands:
+    # Hand Landmarks
+    hand = hands[0]
+    lm_list = hand['lmList']  # List of 21 Landmark points
+    bbox = hand['bbox']  # Bounding box info x,y,w,h
+    center = hand['center']  # Center of the hand cx,cy
+    
+    # Find how many fingers are up
+    # fingers = detector.fingersUp(hands[0])
+    # fingers_count = fingers.count(1)
+
+    fingers_up = detector.fingersUp(hand)
+    fingers_count = fingers_up.count(1)
+
+    show_name_finger(fingers_up)
+    # cv2.rectangle(current_frame, (25, 150), (100, 400), (0, 255, 0) , cv2.FILLED)
+    # cv2.putText(current_frame, f'{ fingers_count }', (10, 70), cv2.FONT_HERSHEY_PLAIN, 6, (255, 0, 0), 2)
+
+# This function is used to show the name of the finger
 def show_name_finger(fingers_list):
-    # print(fingers_list)
-    # print(fingers_list.count(1))
+
     try:
 
         count = fingers_list.count(1);
-
-        # if (count == 0):
-        #     # return print('none')
-        #     return cv2.putText(current_frame, f'{count}', (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 2)
 
         if (count == 0 or (count > 1 and count < 5)):
             # return print(count)
@@ -154,8 +173,6 @@ def show_name_finger(fingers_list):
         if (count == 5):
             return cv2.putText(current_frame, f'all', (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 2)
         
-        # print(fingers[fingers_list.index(1)])
-
         return cv2.putText(current_frame, f'{ fingers[fingers_list.index(1)] }', (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 2)
     
     except Exception as err:
@@ -165,13 +182,13 @@ def display_frames():
     global current_frame
     global c_time
     global p_time
-    # global fingers_count
 
     # print type current_frame
     while True:
-        # with frame_clock:
+
         if current_frame is not None:
 
+            '''
             hands, _ = detector.findHands(current_frame)
 
             if hands:
@@ -188,12 +205,12 @@ def display_frames():
                 fingers_up = detector.fingersUp(hand)
                 fingers_count = fingers_up.count(1)
 
-                # print(fingers_up[0]) # Thumb finger
-
                 show_name_finger(fingers_up)
 
                 # cv2.rectangle(current_frame, (25, 150), (100, 400), (0, 255, 0) , cv2.FILLED)
                 # cv2.putText(current_frame, f'{ fingers_count }', (10, 70), cv2.FONT_HERSHEY_PLAIN, 6, (255, 0, 0), 2)
+            '''
+            hand_tracking(current_frame)
 
             # Time and FPS Calculation
             # c_time = time.time()
