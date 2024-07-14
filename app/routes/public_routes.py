@@ -14,11 +14,8 @@ def index():
 
 @main.get('/video')
 def video():
-    # return { 'message': 'Hello strange!!' }
     return render_template('index2.html'), 200
-    # return redirect('https://google.com', code=302)
 
 @main.get('/status')
 def status():
-    # print(current_user.res())
     return current_user.res(), 200

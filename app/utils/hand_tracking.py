@@ -10,6 +10,8 @@ hand = mp_hands.Hands()
 
 # Initialising detector from HandTrackingModule
 detector = htm.HandDetector(detectionCon=0.6, maxHands=1)
+
+# Fingers dictionary
 fingers = {
     0: 'thumb',
     1: 'index',

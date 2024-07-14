@@ -1,8 +1,5 @@
 
-
-
 import base64
-from datetime import datetime
 from threading import Thread, Lock
 from flask import Flask, Response, redirect, render_template, request
 from flask_socketio import SocketIO, emit
@@ -17,17 +14,17 @@ from app.utils.frame_manager import FrameManager
 from app.utils.user_manager import UserManager
 from app.config.config import current_user
 
-frame_manager = FrameManager()
-
+# Initialize the Flask app
 app = Flask(__name__)
-# app.config['SOCKET'] = ''
+
+# Initialize the CORS extension
 CORS(app, resources={ r'/*': { 'origins': '*' } })
 
+# Initialize the socketio instance
 socketio = SocketIO(app, cors_allowed_origins='*')
 
-# current_frame = None
+frame_manager = FrameManager()
 sid = None
-# current_user = UserManager() # Not show error on init app
 
 # '''
 @socketio.on('connect')
@@ -43,26 +40,19 @@ def connect():
 @socketio.on('disconnect')
 def disconnect():
     global sid
-    global current_user
     
     print(f'Client disconnected, id: { str(sid) }')
     sid = None
     current_user.reset_data()
-    # clean buffer cv2
 
-    # cv2.destroyAllWindows()
 
 @socketio.on('destroy')
 def destroy():
     global sid
-    global current_user
 
     print(f'Client disconnected, id: { str(sid) }')
     sid = None
     current_user.reset_data()
-    # clean buffer cv2
-
-    # cv2.destroyAllWindows()
 
 @socketio.on('frame')
 def handle_frame(data):
@@ -71,7 +61,6 @@ def handle_frame(data):
     array = np.frombuffer(img_data, np.uint8) # Convert the image data to a NumPy array
     frame = cv2.imdecode(array, cv2.IMREAD_COLOR) # Decode the image
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    # emit('messages', { 'data': 'hello!' })
 
     # Detect faces
     # faces = face_cascade.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30), flags=cv2.CASCADE_SCALE_IMAGE)
@@ -98,7 +87,4 @@ def init_app ():
 
     app.register_blueprint(public_routes.main, url_prefix = '/')
 
-    # socketio.run(app, host='0.0.0.0', port=8080, debug=True)
-
     return  app, socketio
-
