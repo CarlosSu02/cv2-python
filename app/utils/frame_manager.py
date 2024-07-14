@@ -7,7 +7,7 @@ class FrameManager:
 
     def __init__ (self):
         self.frame = None
-        self.frame_lock = Lock()
+        self.frame_lock = Lock() # Lock the frame to avoid, en español, esto es para evitar que se corrompa el frame
 
     def get_frame (self):
         return self.frame
@@ -39,5 +39,3 @@ class FrameManager:
             if cv2.waitKey(30) & 0xFF == ord('q'):
                 cv2.destroyAllWindows()
                 break
-
-

@@ -1,7 +1,6 @@
 
 from datetime import datetime
 
-
 class UserManager:
     def __init__(self, sid = None, date = None):
         self.sid = sid
@@ -13,6 +12,11 @@ class UserManager:
     def update_data (self, sid, date = datetime.now()):
         self.sid = sid
         self.date = date
+        return
+    
+    def reset_data (self):
+        self.sid = None
+        self.date = None
         return
     
     def res (self):
