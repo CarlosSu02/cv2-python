@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request
 
 from app.utils.user_manager import UserManager
-from main import current_user
+from app.config.config import current_user
 
 main = Blueprint('public_blueprint', __name__)
 
