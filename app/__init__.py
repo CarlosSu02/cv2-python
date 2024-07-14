@@ -13,6 +13,7 @@ from app.utils.hand_tracking import hand_tracking
 from app.utils.frame_manager import FrameManager
 from app.utils.user_manager import UserManager
 from app.config.config import current_user
+from app.utils.socket_manager import socket_manager, socketio
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -20,13 +21,10 @@ app = Flask(__name__)
 # Initialize the CORS extension
 CORS(app, resources={ r'/*': { 'origins': '*' } })
 
-# Initialize the socketio instance
-socketio = SocketIO(app, cors_allowed_origins='*')
-
 frame_manager = FrameManager()
-sid = None
+# sid = None
 
-# '''
+'''
 @socketio.on('connect')
 def connect():
     global sid
@@ -78,12 +76,14 @@ def handle_frame(data):
 
     # frame_manager.update_frame(frame) # Uncomment this line to display the frame
 
-#'''
+'''
 
 def init_app ():
     display_thread = Thread(target=frame_manager.display_frames, daemon=True) # Create a thread for displaying frames
     display_thread.start() # Start the thre ad
     gunicorn.SERVER_NAME = 'gunicorn'
+
+    socket_manager(app)
 
     app.register_blueprint(public_routes.main, url_prefix = '/')
 
