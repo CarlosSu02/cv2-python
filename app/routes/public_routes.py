@@ -14,7 +14,7 @@ def index():
 
 @main.get('/video')
 def video():
-    return render_template('index2.html'), 200
+    return render_template('index3.html'), 200
 
 @main.get('/status')
 def status():
