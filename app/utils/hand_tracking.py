@@ -3,6 +3,9 @@ import cv2
 import mediapipe as mp
 import cvzone.HandTrackingModule as htm
 
+# from main import arduino
+from app.config.config import arduino
+
 # Load the mediapipe hands model
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
@@ -53,8 +56,15 @@ def show_name_finger(fingers_list, current_frame):
 
         count = fingers_list.count(1);
 
+        arduino.write(f'{ count }')
+
         if (count == 0 or (count > 1 and count < 5)):
             # return print(count)
+            # arduino.open()
+            # arduino.write(f'hi from python { count }'.encode())
+            # print(arduino.is_open)
+            # arduino.write(f'{ count }'.encode())
+            # arduino.close()
             return cv2.putText(current_frame, f'{ count }', (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 2)
 
         if (count == 5):
@@ -64,3 +74,7 @@ def show_name_finger(fingers_list, current_frame):
     
     except Exception as err:
         print(err)
+
+# arduino.close()
+
+# arduino.close()
