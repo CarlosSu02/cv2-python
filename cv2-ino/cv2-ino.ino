@@ -1,7 +1,7 @@
 
 
 int pinLed = 13;
-// int pinInit = 5, pinLast = 9; // todos continuos
+int pinInit = 5, pinLast = 9; // todos continuos
 
 void setup() {
   // put your setup code here, to run once:
