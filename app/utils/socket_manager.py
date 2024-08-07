@@ -7,7 +7,7 @@ import cv2
 
 from app.utils.hand_tracking import hand_tracking
 from app.utils.frame_manager import FrameManager
-from app.config.config import current_user
+from app.config.config import current_user, arduino
 
 frame_manager = FrameManager()
 sid = None
@@ -34,6 +34,7 @@ def socket_manager (app):
         global sid
         
         print(f'Client disconnected, id: { str(sid) }')
+        arduino.write(b'0') # Para que apague todas las leds
         sid = None
         current_user.reset_data()
 
@@ -42,6 +43,7 @@ def socket_manager (app):
         global sid
 
         print(f'Client disconnected, id: { str(sid) }')
+        arduino.write(b'0') # Par que apague todas las leds
         sid = None
         current_user.reset_data()
 
