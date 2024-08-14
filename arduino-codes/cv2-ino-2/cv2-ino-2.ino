@@ -1,31 +1,34 @@
 
 
-int pinLed = 13;
+int pinLed = 13, relay = 4;
 int pinInit = 5, pinLast = 9; // todos continuos
+String data = ""; 
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
 
-  pinMode(pinLed, OUTPUT);
+  // pinMode(pinLed, OUTPUT);
+  pinMode(relay, OUTPUT);
 
-  // for (int i = pinInit; i <= pinLast; i++) {
+  for (int i = pinInit; i <= pinLast; i++) {
   	
-  //   pinMode(i, OUTPUT);
+    pinMode(i, OUTPUT);
     
-  // }
+  }
 
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
 
-  py();
+  // py();
+  // digitalWrite(pinLed, HIGH);
 
-  // serRead();
+  serRead();
 
 }
-
+/*
 void py () {
 
 
@@ -54,21 +57,57 @@ void py () {
   digitalWrite(pinLed, LOW);
   // delay(100);
 
-}
+}*/
 
 void serRead () {
+
+  while (Serial.available())
+  {
+    char character = Serial.read();
+    if (character != '\n') {
+
+
+      if (character >= '0' && character <= '9') {
+      
+        if (character < '1' || character > '5')
+          return onLeds(0, false);
+
+        character -= '0';
+          
+        return onLeds(character, true);
+
+      }
+
+      data.concat(character);
+    } else {
+
+      // Serial.println("data");
+      // Serial.println(data);
+
+      if (data == "on") {
+        digitalWrite(relay, LOW);  // envia señal baja al relay
+      }
+
+      if (data == "off") {
+        digitalWrite(relay, HIGH);  // envia señal alta al relay
+      }
+
+      data = "";
+
+    }
+  }
+
+  // if (Serial.available() <= 0)
+  //   return;
+
+  // char count = Serial.read();
+
+  // if (count < '1' || count > '5')
+  //   return onLeds(0, false);
+
+  // count -= '0';
   
-  if (Serial.available() <= 0)
-    return;
-
-  char count = Serial.read();
-
-  if (count < '1' || count > '5')
-    return onLeds(0, false);
-
-  count -= '0';
-  
-  return onLeds(count, true);
+  // return onLeds(count, true);
   
   // Serial.println(int(count));
   
@@ -113,7 +152,7 @@ void onLeds (int count, bool on) {
   
     // Serial.println(i);
     digitalWrite(i, on ? HIGH : LOW);
-    delay(50);
+    // delay(50);
     
   }
   

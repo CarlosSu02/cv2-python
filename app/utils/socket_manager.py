@@ -29,12 +29,19 @@ def socket_manager (app):
         # emit('messages', { 'data': False })
         print(f'New client connected, id: { str(sid) }') 
 
+        if arduino:
+            arduino.ser().write(b'0') # Para que apague todas las leds
+    
+
     @socketio.on('disconnect')
     def disconnect():
         global sid
         
         print(f'Client disconnected, id: { str(sid) }')
-        arduino.write(b'0') # Para que apague todas las leds
+    
+        if arduino:
+            arduino.ser().write(b'0') # Para que apague todas las leds
+    
         sid = None
         current_user.reset_data()
 
@@ -43,7 +50,10 @@ def socket_manager (app):
         global sid
 
         print(f'Client disconnected, id: { str(sid) }')
-        arduino.write(b'0') # Par que apague todas las leds
+        
+        if arduino:
+            arduino.ser().write(b'0') # Par que apague todas las leds
+    
         sid = None
         current_user.reset_data()
 

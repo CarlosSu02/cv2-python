@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Astro description">
+  <meta name="viewport" content="width=device-width">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta name="generator" content="Astro v4.11.5"><!-- <meta
+      http-equiv="Content-Security-Policy"
+      content="upgrade-insecure-requests"
+    /> --><!-- <script
+      src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+      integrity="sha384-pVvZtcvNNHk9VGq7D4nAGQyPymB5f+/7CSyoRUnOxgyHrwBT5mPIpq3Rb6Gx5XW3"
+      crossorigin="anonymous"></script> -->
+  <link href="https://fonts.cdnfonts.com/css/cascadia-code" rel="stylesheet">
+  <title>Admin</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='/_astro/admin.D9mnQ-1F.css') }}">
+  <style>
+    :root {
+      --primary: #007bff;
+      --secondary: #6c757d;
+      --success: #28a745;
+      --danger: #dc3545;
+      --warning: #ffc107;
+      --info: #17a2b8;
+      --light: #f8f9fa;
+      --dark: #343a40
+    }
+
+    button[data-astro-cid-vnzlvqnm] {
+      font: inherit;
+      cursor: pointer;
+      --bkg: var(--background);
+      --color: var(--foreground);
+      display: flex;
+      gap: .2em;
+      align-items: center;
+      background-color: var(--light);
+      color: var(--bkg);
+      border: .2em solid var(--bkg);
+      border-radius: .4em;
+      padding: .4em 1.25em;
+      transition: box-shadow .2s cubic-bezier(.075, .82, .165, 1), opacity .2s cubic-bezier(.075, .82, .165, 1), scale .2s cubic-bezier(.075, .82, .165, 1)
+    }
+
+    button[data-astro-cid-vnzlvqnm].filled {
+      background-color: var(--bkg);
+      color: var(--color);
+      border: none
+    }
+
+    button[data-astro-cid-vnzlvqnm]:focus {
+      outline-color: transparent
+    }
+
+    button[data-astro-cid-vnzlvqnm]:hover {
+      opacity: .8;
+      scale: 1.05
+    }
+
+    button[data-astro-cid-vnzlvqnm]:focus-visible {
+      box-shadow: 0 0 0 .1em var(--light), 0 0 0 .3em var(--bkg)
+    }
+
+    [data-astro-cid-vnzlvqnm][data-size=sm] {
+      font-size: .8rem
+    }
+
+    [data-astro-cid-vnzlvqnm][data-size=md] {
+      font-size: 1.1rem
+    }
+
+    [data-astro-cid-vnzlvqnm][data-size=lg] {
+      font-size: 1.5rem
+    }
+
+    main[data-astro-cid-eejuo44g] {
+      margin: auto;
+      padding: 1rem;
+      width: 1000px;
+      max-width: calc(100% - 2rem);
+      color: #fff
+    }
+  </style>
+</head>
+
+<body>
+  <main data-astro-cid-eejuo44g>
+    <div class="mt-10 text-center" data-astro-cid-eejuo44g>
+      <h1 class="text-5xl md:text-6xl xl:text-7xl" data-astro-cid-eejuo44g>UNAH - CUROC</h1>
+    </div>
+    <div class="mt-10 flex items-center justify-center" data-astro-cid-eejuo44g> <button class="filled mr-4"
+        type="button" data-size="md" id="state-on" data-astro-cid-eejuo44g data-astro-cid-vnzlvqnm
+        style="--foreground: var(--light);--background: var(--primary);"> <a href="?state=on"
+          data-astro-cid-eejuo44g>Encender</a> </button> <button class="filled" type="button" data-size="md"
+        id="state-off" data-astro-cid-eejuo44g data-astro-cid-vnzlvqnm
+        style="--foreground: var(--light);--background: var(--danger);"> <a href="?state=off"
+          data-astro-cid-eejuo44g>Apagar</a> </button> </div>
+  </main>
+</body>
+
+</html>
