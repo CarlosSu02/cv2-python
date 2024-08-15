@@ -15,7 +15,7 @@ python.exe -m pip install --upgrade pip
 ```bash
 pip install -r requirements.txt
 ```
-- Ejecutar el archivo main.py de la carpeta app
+- Ejecutar el archivo main.py
 ```bash
 python main.py 
 ```
