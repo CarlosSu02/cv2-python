@@ -22,10 +22,11 @@ def video():
 @main.get('/led')
 def led():
     state = request.args.get('state')
-    print(state)
+    # print(state)
 
     # match state with on or off
     if state is not None and re.search(r'on|off', state, re.IGNORECASE):
+        print(arduino)
         if arduino is None:
             return render_template('./led/index.html', message = 'Arduino no está conectado'), 200
             

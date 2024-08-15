@@ -10,7 +10,7 @@ arduino = None
 try:
     arduino = ArduinoManager()  # Manejar errores al inicializar Arduino
 except Exception as e:
-    print(f"Error al inicializar Arduino: {e}")
+    print(f"Error al inicializar Arduino: { e }")
 
 config = {
     'host': '0.0.0.0',
