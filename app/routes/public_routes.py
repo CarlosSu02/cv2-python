@@ -10,13 +10,14 @@ main = Blueprint('public_blueprint', __name__)
 
 @main.get('/')
 def index():
-    return {
-        'message': 'May the force be with you!',
-    }, 200
+    # return {
+    #     'message': 'May the force be with you!',
+    # }, 200
+    return render_template('index.html'), 200
 
 @main.get('/video')
 def video():
-    return render_template('index3.html'), 200
+    return render_template('./video/index.html'), 200
 
 @main.get('/led')
 def led():
@@ -24,12 +25,14 @@ def led():
     print(state)
 
     # match state with on or off
-    if re.search(r'on|off', state, re.IGNORECASE):
-        if arduino:
-            arduino.write(f'{state}\n')
-            print('match')
+    if state is not None and re.search(r'on|off', state, re.IGNORECASE):
+        if arduino is None:
+            return render_template('./led/index.html', message = 'Arduino no está conectado'), 200
+            
+        arduino.write(f'{state}\n')
+        # return render_template('./led/index.html', message = ''), 200
 
-    return render_template('led.html', active = state), 200
+    return render_template('./led/index.html', message = ''), 200
 
 @main.get('/led?led=<led>') 
 def led_managment(led):

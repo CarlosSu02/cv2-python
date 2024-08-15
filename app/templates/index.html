@@ -1,50 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Stream</title>
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-
-    <script src="https://cdn.socket.io/4.1.3/socket.io.min.js"></script>
-</head>
-<body>
-    <h1>Live Camera Stream</h1>
-    <video id="video" width="640" height="480" autoplay></video>
-
-    <script>
-        const video = document.getElementById('video');
-        const socket = io.connect('http://' + document.domain + ':' + location.port);
-
-        // const { id } = socket;
-
-        // console.log(socket);
-        // console.log(socket.id);
-
-        // receive messages from the server
-        socket.on('messages', data => { 
-            console.log(data);
-            return data; });
-
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                video.srcObject = stream;
-                video.play();
-
-                const canvas = document.createElement('canvas');
-                canvas.width = 640;
-                canvas.height = 480;
-                const context = canvas.getContext('2d');
-
-                setInterval(() => {
-                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    const dataURL = canvas.toDataURL('image/jpeg');
-                    socket.emit('frame', dataURL);
-                }, 100); // Send frames every 100ms
-            })
-            .catch(err => {
-                console.error("Error accessing the camera: ", err);
-            });
-    </script>
-</body>
-</html>
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="description" content="Astro description"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v4.11.5"><!-- <meta
+      http-equiv="Content-Security-Policy"
+      content="upgrade-insecure-requests"
+    /> --><!-- <script
+      src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+      integrity="sha384-pVvZtcvNNHk9VGq7D4nAGQyPymB5f+/7CSyoRUnOxgyHrwBT5mPIpq3Rb6Gx5XW3"
+      crossorigin="anonymous"></script> --><link href="https://fonts.cdnfonts.com/css/cascadia-code" rel="stylesheet"><title>Principal</title><link rel="stylesheet" href="{{ url_for('static', filename='/_astro/admin.BL49ixZp.css') }}">
+<style>:root{--primary: #007bff;--secondary: #6c757d;--success: #28a745;--danger: #dc3545;--warning: #ffc107;--info: #17a2b8;--light: #f8f9fa;--dark: #343a40}button[data-astro-cid-vnzlvqnm]{font:inherit;cursor:pointer;--bkg: var(--background);--color: var(--foreground);display:flex;gap:.2em;align-items:center;background-color:var(--light);color:var(--bkg);border:.2em solid var(--bkg);border-radius:.4em;padding:.4em 1.25em;transition:box-shadow .2s cubic-bezier(.075,.82,.165,1),opacity .2s cubic-bezier(.075,.82,.165,1),scale .2s cubic-bezier(.075,.82,.165,1)}button[data-astro-cid-vnzlvqnm].filled{background-color:var(--bkg);color:var(--color);border:none}button[data-astro-cid-vnzlvqnm]:focus{outline-color:transparent}button[data-astro-cid-vnzlvqnm]:hover{opacity:.8;scale:1.05}button[data-astro-cid-vnzlvqnm]:focus-visible{box-shadow:0 0 0 .1em var(--light),0 0 0 .3em var(--bkg)}[data-astro-cid-vnzlvqnm][data-size=sm]{font-size:.8rem}[data-astro-cid-vnzlvqnm][data-size=md]{font-size:1.1rem}[data-astro-cid-vnzlvqnm][data-size=lg]{font-size:1.5rem}
+main[data-astro-cid-j7pv25f6]{grid-column:1 / -1}.astro-a[data-astro-cid-j7pv25f6]{position:absolute;top:-32px;left:50%;transform:translate(-50%);width:220px;height:auto;z-index:-1}main[data-astro-cid-j7pv25f6]{margin:auto;padding:1rem;width:1000px;max-width:calc(100% - 2rem);color:#fff}.text-gradient[data-astro-cid-j7pv25f6]{background-image:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:400%;background-position:0%}
+</style></head> <body>  <main data-astro-cid-j7pv25f6> <h1 class="mt-10 text-center" data-astro-cid-j7pv25f6> <span class="text-gradient text-5xl md:text-7xl xl:text-8xl" data-astro-cid-j7pv25f6>Bienvenido</span> </h1> <div class="mt-10 flex items-center justify-center" data-astro-cid-j7pv25f6> <button class="mr-4 filled" type="button" data-size="md" id="video-opencv" data-astro-cid-j7pv25f6 data-astro-cid-vnzlvqnm style="--foreground: var(--light);--background: var(--primary);">   <a href="/video" data-astro-cid-j7pv25f6>OpenCV</a>  </button>  <button class="filled" type="button" data-size="md" id="led" data-astro-cid-j7pv25f6 data-astro-cid-vnzlvqnm style="--foreground: var(--light);--background: var(--danger);">   <a href="/led" data-astro-cid-j7pv25f6>Led</a>  </button>  </div> </main>   </body></html>
