@@ -1,4 +1,5 @@
 
+import re
 import serial.tools.list_ports, time
 
 portData = serial.tools.list_ports.comports()
@@ -25,9 +26,17 @@ ser = None
 #         ser.write(b'10')
 #         # print(line)
 
+print(portData)
+
 for port in portData:
-    # print(port)
+
+    print(port.description)
+    
     try:
+
+        if re.search('Arduino|CH340', port.description, re.IGNORECASE) is None:
+            continue
+
         ser = serial.Serial(port.device, 9600, timeout=.1)
         time.sleep(2)  # Espera a que el Arduino se inicialice
         print(f'Conectado a Arduino en { port.device }')

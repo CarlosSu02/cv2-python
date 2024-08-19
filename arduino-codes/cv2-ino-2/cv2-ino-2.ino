@@ -79,22 +79,29 @@ void serRead () {
       }
 
       data.concat(character);
+
     } else {
 
       // Serial.println("data");
       // Serial.println(data);
 
-      if (data == "on") {
-        digitalWrite(relay, LOW);  // envia señal baja al relay
-      }
+      if (data == "on")
+        digitalWrite(relay, LOW); // envia señal baja al relay
+  
 
-      if (data == "off") {
-        digitalWrite(relay, HIGH);  // envia señal alta al relay
-      }
+      if (data == "off")
+        digitalWrite(relay, HIGH); // envia señal alta al relay
+
+      if (data == "reset")
+        onLeds(0, false), digitalWrite(relay, HIGH);  // apaga todos los leds y envia señal alta al relay
+
+      if (data == "all")
+        onLeds(5, true), digitalWrite(relay, LOW);  // enciende todos los leds y envia señal baja al relay
 
       data = "";
 
     }
+    
   }
 
   // if (Serial.available() <= 0)
@@ -126,10 +133,10 @@ void onLeds (int count, bool on) {
   // Serial.println('5' - count);
   // Serial.println(count + '1');
     
-  Serial.print("count: ");
-  Serial.println(int(count));
-  Serial.print("on: ");
-  Serial.println(String(on));
+  // Serial.print("count: ");
+  // Serial.println(int(count));
+  // Serial.print("on: ");
+  // Serial.println(String(on));
   
   if (count < 0)
     return;
@@ -141,7 +148,7 @@ void onLeds (int count, bool on) {
   //Serial.println(count);
   
   if (count < 5)
-    for (int i = (count + 4); i <= pinLast; i++) {
+    for (int i = (count + 5); i <= pinLast; i++) {
 
       digitalWrite(i, count == 0 ? LOW : on ? LOW : HIGH);
       // delay(100);

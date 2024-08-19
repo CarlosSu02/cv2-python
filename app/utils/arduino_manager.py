@@ -1,3 +1,5 @@
+
+import re
 import time
 import serial
 import serial.tools.list_ports
@@ -14,6 +16,10 @@ class ArduinoManager:
         for port in self.portData:
             # print(port)
             try:
+
+                if re.search('Arduino|CH340', port.description, re.IGNORECASE) is None:
+                    continue
+
                 self.arduino = serial.Serial(port.device, 9600, timeout=.1)
                 time.sleep(2)  # Espera a que el Arduino se inicialice
                 
