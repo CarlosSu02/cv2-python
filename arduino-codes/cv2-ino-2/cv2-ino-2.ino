@@ -1,12 +1,25 @@
 
-
 int pinLed = 13, relay = 4;
 int pinInit = 5, pinLast = 9; // todos continuos
 String data = ""; 
 
+// fotocelda
+int LDR = A0;  //Pin análogo en donde va conectada la fotocelda
+int Led = 11;  //Pin PWM donde va conectado el LED
+int LDR_valor = 0;
+
+int trigPin = 13;
+int echoPin = 10;
+long duration;
+int distance;
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+
+  pinMode(Led,OUTPUT); 
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
 
   // pinMode(pinLed, OUTPUT);
   pinMode(relay, OUTPUT);
@@ -26,6 +39,7 @@ void loop() {
   // digitalWrite(pinLed, HIGH);
 
   serRead();
+  fotocelda();
 
 }
 /*
@@ -165,4 +179,45 @@ void onLeds (int count, bool on) {
   
   // onLeds(serRead(), false);
   
+}
+
+void fotocelda () {
+ 
+  // Enviar pulso ultrasónico
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  // Leer el pulso de respuesta del sensor
+  duration = pulseIn(echoPin, HIGH);
+  
+  // Calcular la distancia en centímetros
+  distance = duration * 0.034 / 2;
+  
+  // Mostrar la distancia en el monitor serie
+  //Serial.print("Distancia: ");
+  //Serial.print(distance);
+  //Serial.println(" cm");
+    
+  LDR_valor = analogRead(LDR);
+  
+  //Serial.print("LDR = ");
+  //Serial.println(LDR_valor);
+  
+  if (LDR_valor <= 150  && distance < 20){
+
+    digitalWrite(Led, LOW);
+    //delay(10000);
+    for(int i = 0; i< 1000; i++){
+      serRead();
+      delay(10);
+    }
+  }
+  else
+    digitalWrite(Led, HIGH);
+
+  return;
+
 }

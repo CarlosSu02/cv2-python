@@ -56,7 +56,7 @@ def show_name_finger(fingers_list, current_frame):
 
         count = fingers_list.count(1);
 
-        if arduino:
+        if arduino is not None:
             arduino.write(f'{ count }')
 
         if (count == 0 or (count > 1 and count < 5)):
