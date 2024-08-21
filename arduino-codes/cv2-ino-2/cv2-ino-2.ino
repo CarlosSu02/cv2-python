@@ -23,6 +23,7 @@ void setup() {
 
   // pinMode(pinLed, OUTPUT);
   pinMode(relay, OUTPUT);
+  digitalWrite(relay, HIGH);
 
   for (int i = pinInit; i <= pinLast; i++) {
   	
@@ -84,6 +85,8 @@ void serRead () {
     
   }
 
+  return;
+
 }
 
 void onLeds (int count, bool on) {
@@ -103,6 +106,8 @@ void onLeds (int count, bool on) {
     digitalWrite(i, on ? HIGH : LOW);
     
   }
+
+  return;
     
 }
 
@@ -139,6 +144,9 @@ void fotocelda () {
       serRead();
       delay(10);
     }
+    
+    return;
+
   }
   else
     digitalWrite(Led, HIGH);

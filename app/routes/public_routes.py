@@ -92,14 +92,14 @@ def init_arduino():
         
         return {
             'status': 200,
-            'message': 'Arduino inicializado correctamente.',
+            'message': 'Arduino inicializado correctamente, si las leda no encienden, considere guardar algún código con extensión .py.',
         }, 200
     
     except Exception as e:
         # print(e)
         return {
             'status': 400,
-            'message': 'Error al inicializar el Arduino. Considere desconectar y conectar el Arduino.',
+            'message': 'Error al inicializar el Arduino. Considere desconectar y conectar el Arduino y guardar algun código con extensión .py.',
         }, 400
 
 @main.get('/status')
