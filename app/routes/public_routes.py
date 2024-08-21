@@ -26,23 +26,6 @@ def video():
 
 @main.get('/led')
 def led():
-    # state = request.args.get('state')
-    # print(state)
-
-    # match state with on or off
-    # if state is not None and re.search(r'on|off', state, re.IGNORECASE):
-    #     # print(arduino)
-    #     try:
-    #         if arduino is None:
-    #             return render_template('./led/index.html', message = 'Arduino no está conectado'), 400
-            
-    #         arduino.write(f'{state}\n')
-    #         # return render_template('./led/index.html', message = ''), 200
-        
-    #     except Exception as e:
-    #         # print(e)
-    #         return render_template('./led/index.html', message = 'Error al enviar el comando al Arduino.'), 400
-
     return render_template('./led/index.html', message = ''), 200
 
 @main.post('/change-states')
